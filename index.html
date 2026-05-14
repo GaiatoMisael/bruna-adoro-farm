@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bruna Adoro Farm</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,700;1,9..144,900&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Big+Shoulders+Display:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+/* ================================
+   ROOT & RESET
+================================ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --terracota:  #D4533A;
+  --terracota2: #E8714F;
+  --rosa-quente:#E8507C;
+  --amarelo:    #F2C94C;
+  --verde-musgo:#2E5338;
+  --verde-lima: #8CC63F;
+  --creme:      #FAF5EC;
+  --creme2:     #F0E8D8;
+  --marrom:     #3D1F0D;
+  --branco:     #FEFCF8;
+  --t: 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: var(--creme);
+  color: var(--marrom);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ================================
+   CURSOR
+================================ */
+#cur {
+  position: fixed; width:14px; height:14px;
+  background: var(--terracota);
+  border-radius: 50%;
+  pointer-events: none; z-index:99999;
+  transform: translate(-50%,-50%);
+  transition: width .25s, height .25s, background .25s;
+  mix-blend-mode: multiply;
+}
+#curR {
+  position: fixed; width:36px; height:36px;
+  border: 1.5px solid var(--terracota);
+  border-radius: 50%;
+  pointer-events: none; z-index:99998;
+  transform: translate(-50%,-50%);
+  opacity:.45;
+}
+body.hovering #cur { width:28px; height:28px; background: var(--rosa-quente); }
+
+/* ================================
+   PÁGINAS
+================================ */
+.pagina { display:none; }
+.pagina.ativa { display:block; animation: pageIn .55s var(--t) both; }
+@keyframes pageIn {
+  from { opacity:0; transform:translateY(22px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ================================
+   HEADER
+================================ */
+.topo {
+  position: fixed; top:0; left:0; width:100%; height:64px;
+  display: flex; align-items:center; justify-content:space-between;
+  padding: 0 36px;
+  background: rgba(250,245,236,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1.5px solid rgba(61,31,13,0.08);
+  z-index: 9000;
+}
+
+.logo {
+  display:flex; flex-direction:column; line-height:1; cursor:pointer;
+}
+.logo-bruna {
+  font-family: 'Fraunces', serif;
+  font-size: 11px; font-weight:300; font-style:italic;
+  letter-spacing:4px; text-transform:uppercase;
+  color: rgba(61,31,13,0.5);
+}
+.logo-main {
+  font-family: 'Big Shoulders Display', sans-serif;
+  font-size: 22px; font-weight:900; letter-spacing:-0.5px;
+  color: var(--terracota);
+  text-transform: uppercase;
+  line-height:1.1;
+}
+.logo-main span { color: var(--verde-musgo); }
+
+.nav-desk {
+  display:flex; gap:2px; align-items:center;
+}
+.nav-desk a {
+  font-size:12px; font-weight:600; letter-spacing:2px; text-transform:uppercase;
+  color: rgba(61,31,13,0.5); text-decoration:none; cursor:pointer;
+  padding:8px 16px; border-radius:4px;
+  transition: color .2s, background .2s;
+}
+.nav-desk a:hover, .nav-desk a.ativo {
+  color: var(--terracota);
+  background: rgba(212,83,58,0.07);
+}
+
+.topo-right { display:flex; gap:10px; align-items:center; }
+
+.sacola-btn {
+  display:flex; align-items:center; gap:8px;
+  background: var(--marrom);
+  color: var(--creme);
+  border: none; border-radius:4px;
+  padding: 10px 20px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size:12px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase;
+  cursor:pointer; transition: all .25s;
+}
+.sacola-btn:hover { background: var(--terracota); transform:translateY(-1px); }
+
+.sacola-badge {
+  background: var(--terracota); color:white;
+  width:18px; height:18px; border-radius:50%;
+  font-size:10px; font-weight:700;
+  display:none; align-items:center; justify-content:center;
+}
+.sacola-badge.vis { display:flex; }
+
+.hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:6px; }
+.hamburger span { display:block; width:22px; height:1.5px; background:var(--marrom); border-radius:2px; transition:all .3s; }
+.hamburger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity:0; }
+.hamburger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
+
+/* ================================
+   MENU MOBILE
+================================ */
+.mob-ov {
+  position:fixed; inset:0;
+  background:rgba(61,31,13,0.5); backdrop-filter:blur(6px);
+  z-index:8997; opacity:0; pointer-events:none; transition:opacity .3s;
+}
+.mob-ov.open { opacity:1; pointer-events:all; }
+
+.menu-mob {
+  position:fixed; top:0; right:-290px; width:270px; height:100%;
+  background:var(--branco);
+  border-left:1.5px solid rgba(61,31,13,0.08);
+  z-index:8998; padding:90px 0 40px;
+  display:flex; flex-direction:column;
+  transition:right .4s var(--t);
+}
+.menu-mob.open { right:0; }
+.menu-mob a {
+  font-family:'Big Shoulders Display', sans-serif;
+  font-size:28px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+  color:var(--marrom); text-decoration:none; cursor:pointer;
+  padding:14px 32px;
+  border-left:3px solid transparent;
+  transition:all .25s;
+}
+.menu-mob a:hover { color:var(--terracota); border-left-color:var(--terracota); }
+
+/* ================================
+   HERO — layout editorial diagonal
+================================ */
+.hero {
+  padding-top: 64px;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 55% 45%;
+}
+
+/* Faixa diagonal de fundo */
+.hero::after {
+  content:'';
+  position:absolute;
+  top:0; right:0;
+  width:48%; height:100%;
+  background: var(--terracota);
+  clip-path: polygon(8% 0, 100% 0, 100% 100%, 0% 100%);
+  z-index:0;
+}
+
+.hero-left {
+  position:relative; z-index:2;
+  display:flex; flex-direction:column; justify-content:center;
+  padding: 80px 60px 80px 8vw;
+}
+
+.hero-tag {
+  display:inline-flex; align-items:center; gap:10px;
+  font-size:10px; font-weight:600; letter-spacing:4px; text-transform:uppercase;
+  color:var(--verde-musgo); margin-bottom:24px;
+  opacity:0; animation:slideUp .5s .1s both;
+}
+.hero-tag::before {
+  content:''; width:30px; height:1.5px; background:var(--verde-musgo);
+}
+
+@keyframes slideUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.hero-h1 {
+  font-family:'Fraunces', serif;
+  font-weight:900;
+  font-size: clamp(50px, 6.5vw, 88px);
+  line-height:.95;
+  color:var(--marrom);
+  margin-bottom:30px;
+  opacity:0; animation:slideUp .6s .25s both;
+}
+.hero-h1 em {
+  font-style:italic;
+  color:var(--terracota);
+  display:block;
+}
+.hero-h1 .underline {
+  position:relative; display:inline-block;
+}
+.hero-h1 .underline::after {
+  content:'';
+  position:absolute; bottom:-4px; left:0;
+  width:100%; height:3px;
+  background:var(--amarelo);
+  border-radius:2px;
+  transform-origin:left;
+  animation:lineGrow .6s .9s both;
+}
+@keyframes lineGrow { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+
+.hero-sub {
+  font-size:15px; font-weight:400; font-style:italic;
+  color:rgba(61,31,13,0.55); line-height:1.8;
+  max-width:380px; margin-bottom:40px;
+  opacity:0; animation:slideUp .6s .4s both;
+}
+
+.hero-btns {
+  display:flex; gap:12px; flex-wrap:wrap;
+  opacity:0; animation:slideUp .6s .55s both;
+}
+
+.btn-marrom {
+  background:var(--marrom); color:var(--creme);
+  padding:15px 32px; border-radius:4px; border:none;
+  font-family:'Instrument Sans',sans-serif;
+  font-size:12px; font-weight:600; letter-spacing:2px; text-transform:uppercase;
+  cursor:pointer; text-decoration:none;
+  transition:all .3s;
+  box-shadow: 4px 4px 0 var(--amarelo);
+}
+.btn-marrom:hover { transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--amarelo); }
+
+.btn-ghost {
+  background:transparent; color:var(--marrom);
+  padding:14px 32px; border-radius:4px;
+  border:1.5px solid rgba(61,31,13,0.25);
+  font-family:'Instrument Sans',sans-serif;
+  font-size:12px; font-weight:600; letter-spacing:2px; text-transform:uppercase;
+  cursor:pointer; text-decoration:none;
+  transition:all .3s;
+}
+.btn-ghost:hover { border-color:var(--marrom); background:rgba(61,31,13,0.04); }
+
+.hero-right {
+  position:relative; z-index:2;
+  display:flex; align-items:center; justify-content:center;
+  padding:60px 6vw 60px 40px;
+}
+
+/* Grade de cards flutuantes */
+.hero-cards {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  width:100%; max-width:360px;
+}
+
+.hcard {
+  background:var(--branco);
+  border-radius:16px;
+  padding:22px 18px;
+  text-align:center;
+  opacity:0;
+  animation:cardPop .5s var(--t) both;
+  transition:transform .3s;
+}
+.hcard:hover { transform:translateY(-6px) rotate(-1deg); }
+.hcard:nth-child(1) { animation-delay:.5s; }
+.hcard:nth-child(2) { animation-delay:.65s; margin-top:28px; }
+.hcard:nth-child(3) { animation-delay:.8s; }
+.hcard:nth-child(4) { animation-delay:.95s; margin-top:28px; }
+@keyframes cardPop {
+  from { opacity:0; transform:scale(.85) translateY(20px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+.hcard-emoji { font-size:38px; display:block; margin-bottom:10px; }
+.hcard-nome {
+  font-family:'Big Shoulders Display', sans-serif;
+  font-size:15px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.5px; color:var(--marrom);
+}
+.hcard-price { font-size:12px; color:var(--terracota); font-weight:600; margin-top:3px; }
+
+/* ================================
+   TICKER / FITA ANIMADA
+================================ */
+.ticker-wrap {
+  background:var(--amarelo);
+  padding:14px 0;
+  overflow:hidden;
+  border-top:2px solid var(--marrom);
+  border-bottom:2px solid var(--marrom);
+}
+.ticker {
+  display:flex; gap:0;
+  animation:ticker 18s linear infinite;
+  white-space:nowrap;
+}
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.ticker-item {
+  font-family:'Big Shoulders Display', sans-serif;
+  font-size:16px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+  color:var(--marrom);
+  padding:0 28px;
+  display:inline-flex; align-items:center; gap:16px;
+  flex-shrink:0;
+}
+.ticker-item::after { content:'✿'; color:var(--terracota); }
+
+/* ================================
+   SEÇÃO GERAL
+================================ */
+.section { padding:100px 8vw; }
+
+.stag {
+  font-size:10px; font-weight:600; letter-spacing:5px; text-transform:uppercase;
+  color:var(--terracota); margin-bottom:14px; display:block;
+}
+.stitle {
+  font-family:'Fraunces', serif;
+  font-size:clamp(34px, 5vw, 62px);
+  font-weight:900; line-height:1.05;
+  color:var(--marrom); margin-bottom:16px;
+}
+.stitle em { font-style:italic; color:var(--terracota); }
+.ssub {
+  font-size:15px; font-weight:400; color:rgba(61,31,13,0.5);
+  max-width:480px; line-height:1.8; font-style:italic;
+}
+
+/* ================================
+   PRODUTOS
+================================ */
+.filtros {
+  display:flex; gap:8px; flex-wrap:wrap;
+  margin:36px 0 40px;
+}
+.fbtn {
+  font-family:'Big Shoulders Display', sans-serif;
+  font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+  color:var(--marrom);
+  background:white;
+  border:1.5px solid rgba(61,31,13,0.12);
+  border-radius:3px;
+  padding:9px 22px;
+  cursor:pointer; transition:all .22s;
+}
+.fbtn:hover, .fbtn.ativo {
+  background:var(--marrom); color:var(--creme);
+  border-color:var(--marrom);
+  box-shadow:3px 3px 0 var(--amarelo);
+}
+
+.pgrid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));
+  gap:20px;
+}
+
+.pcard {
+  background:white;
+  border:1.5px solid rgba(61,31,13,0.06);
+  border-radius:12px;
+  overflow:hidden;
+  transition:all .35s;
+  position:relative;
+}
+.pcard:hover {
+  transform:translateY(-6px);
+  box-shadow:0 24px 48px rgba(212,83,58,0.12), 4px 4px 0 var(--amarelo);
+  border-color:rgba(212,83,58,0.2);
+}
+
+.pcard-img {
+  height:200px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:68px;
+  position:relative; overflow:hidden;
+}
+.pcard-img img {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; opacity:0; transition:opacity .3s;
+}
+.pcard-img img.loaded { opacity:1; }
+
+.ptag {
+  position:absolute; top:12px; left:12px;
+  font-family:'Big Shoulders Display', sans-serif;
+  font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  padding:4px 10px; border-radius:2px;
+}
+.ptag.novo { background:var(--verde-musgo); color:white; }
+.ptag.hot  { background:var(--rosa-quente); color:white; }
+
+.pcard-body { padding:18px 20px 20px; }
+.pcat {
+  font-size:9px; font-weight:600; letter-spacing:3px; text-transform:uppercase;
+  color:var(--terracota); margin-bottom:5px;
+}
+.pnome {
+  font-family:'Fraunces', serif;
+  font-size:17px; font-weight:700;
+  color:var(--marrom); line-height:1.3; margin-bottom:6px;
+}
+.pdesc {
+  font-size:12px; color:rgba(61,31,13,0.45);
+  line-height:1.6; margin-bottom:16px;
+  font-style:italic;
+}
+.pfoot { display:flex; align-items:center; justify-content:space-between; }
+.ppreco {
+  font-family:'Fraunces', serif;
+  font-size:22px; font-weight:900; color:var(--terracota);
+}
+.padd {
+  width:40px; height:40px;
+  background:var(--marrom); color:var(--creme);
+  border:none; border-radius:4px;
+  font-size:20px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .25s;
+  box-shadow:2px 2px 0 var(--amarelo);
+}
+.padd:hover { background:var(--terracota); transform:translate(-1px,-1px); box-shadow:3px 3px 0 var(--amarelo); }
+.padd.ok { background:var(--verde-musgo); box-shadow:2px 2px 0 var(--verde-lima); }
+
+/* ================================
+   SOBRE — layout assimétrico
+================================ */
+.sobre-wrap {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px; align-items:center;
+}
+
+.sobre-visual {
+  position:relative; height:520px;
+}
+
+/* Retângulo grande terracota */
+.sv-rect1 {
+  position:absolute;
+  top:0; left:0; right:40px; bottom:60px;
+  background:var(--terracota);
+  border-radius:12px;
+}
+/* Retângulo menor creme deslocado */
+.sv-rect2 {
+  position:absolute;
+  bottom:0; right:0;
+  width:65%; height:55%;
+  background:var(--amarelo);
+  border-radius:12px;
+  border:3px solid var(--marrom);
+}
+/* Emoji central */
+.sv-center {
+  position:absolute;
+  top:50%; left:45%;
+  transform:translate(-50%,-50%);
+  font-size:110px; z-index:3;
+  filter:drop-shadow(0 20px 40px rgba(61,31,13,0.2));
+  animation:floatY 4s ease-in-out infinite;
+}
+@keyframes floatY { 0%,100%{transform:translate(-50%,-50%) translateY(0)} 50%{transform:translate(-50%,-50%) translateY(-14px)} }
+
+/* Badges flutuantes */
+.sv-badge {
+  position:absolute; z-index:4;
+  background:white;
+  border:1.5px solid rgba(61,31,13,0.1);
+  border-radius:8px;
+  padding:10px 14px;
+  font-size:12px; font-weight:600; color:var(--marrom);
+  display:flex; align-items:center; gap:8px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.08);
+  white-space:nowrap;
+  animation:floatY 3.5s ease-in-out infinite;
+}
+.sv-badge:nth-child(4) { top:12%; left:-16px; animation-delay:0s; }
+.sv-badge:nth-child(5) { bottom:20%; right:-10px; animation-delay:.8s; }
+.sv-badge:nth-child(6) { top:62%; left:-8px; animation-delay:1.4s; }
+
+.sobre-texto .stitle { margin-bottom:20px; }
+.sobre-texto p {
+  font-size:14px; color:rgba(61,31,13,0.6);
+  line-height:1.9; margin-bottom:18px; font-style:italic;
+}
+.sobre-valores { margin-top:30px; display:flex; flex-direction:column; gap:12px; }
+.valor {
+  display:flex; align-items:flex-start; gap:14px;
+  padding:14px 18px; background:white;
+  border-left:3px solid var(--terracota);
+  border-radius:0 8px 8px 0;
+  box-shadow:0 2px 10px rgba(0,0,0,0.04);
+}
+.valor-ic { font-size:20px; flex-shrink:0; }
+.valor-tx h4 { font-size:13px; font-weight:600; margin-bottom:2px; }
+.valor-tx p  { font-size:12px; color:rgba(61,31,13,0.45); margin:0; font-style:italic; }
+
+/* ================================
+   CONTATO
+================================ */
+.contato-wrap {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:60px; align-items:start;
+}
+
+.cform {
+  background:white;
+  border:1.5px solid rgba(61,31,13,0.06);
+  border-radius:12px;
+  padding:44px 40px;
+  box-shadow:6px 6px 0 var(--creme2);
+}
+.cform h3 {
+  font-family:'Fraunces', serif;
+  font-size:28px; font-weight:900; color:var(--marrom);
+  margin-bottom:30px; line-height:1.2;
+}
+.cform h3 em { font-style:italic; color:var(--terracota); }
+.fgrp { margin-bottom:18px; }
+.fgrp label {
+  display:block; font-size:9px; font-weight:600;
+  letter-spacing:3px; text-transform:uppercase;
+  color:var(--verde-musgo); margin-bottom:7px;
+}
+.fgrp input, .fgrp textarea {
+  width:100%;
+  background:var(--creme);
+  border:1.5px solid rgba(61,31,13,0.08);
+  border-radius:6px;
+  padding:12px 16px;
+  font-family:'Instrument Sans', sans-serif;
+  font-size:14px; color:var(--marrom);
+  outline:none; resize:none;
+  transition:border-color .25s, box-shadow .25s;
+}
+.fgrp input::placeholder, .fgrp textarea::placeholder { color:rgba(61,31,13,0.28); font-style:italic; }
+.fgrp input:focus, .fgrp textarea:focus {
+  border-color:var(--terracota);
+  box-shadow:0 0 0 3px rgba(212,83,58,0.08);
+}
+
+.cinfo-lado { padding-top:20px; }
+.cinfo-lado h3 {
+  font-family:'Fraunces', serif;
+  font-size:38px; font-weight:900; line-height:1.1;
+  color:var(--marrom); margin-bottom:18px;
+}
+.cinfo-lado h3 em { font-style:italic; color:var(--terracota); }
+.cinfo-lado p {
+  font-size:14px; color:rgba(61,31,13,0.5);
+  line-height:1.8; margin-bottom:36px; font-style:italic;
+}
+.citems { display:flex; flex-direction:column; gap:12px; }
+.citem {
+  display:flex; align-items:center; gap:14px;
+  padding:16px 18px; background:white;
+  border-radius:8px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.04);
+  border:1.5px solid rgba(61,31,13,0.05);
+  transition:transform .25s, box-shadow .25s;
+}
+.citem:hover { transform:translateX(6px); box-shadow:4px 4px 0 var(--amarelo); }
+.citem-ic {
+  width:40px; height:40px;
+  background:var(--creme2); border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0;
+}
+.citem-tx small {
+  display:block; font-size:9px; font-weight:600;
+  letter-spacing:3px; text-transform:uppercase;
+  color:var(--terracota); margin-bottom:2px;
+}
+.citem-tx span { font-size:14px; font-weight:500; }
+
+/* ================================
+   CARRINHO DRAWER
+================================ */
+.cart-ov {
+  position:fixed; inset:0;
+  background:rgba(61,31,13,0.55); backdrop-filter:blur(6px);
+  z-index:9989; opacity:0; pointer-events:none; transition:opacity .35s;
+}
+.cart-ov.open { opacity:1; pointer-events:all; }
+
+.cart-drw {
+  position:fixed; top:0; right:-420px;
+  width:400px; max-width:96vw; height:100%;
+  background:var(--branco);
+  border-left:1.5px solid rgba(61,31,13,0.08);
+  z-index:9990;
+  display:flex; flex-direction:column;
+  transition:right .45s var(--t);
+}
+.cart-drw.open { right:0; }
+
+.cart-hd {
+  padding:22px 24px;
+  border-bottom:1.5px solid rgba(61,31,13,0.06);
+  display:flex; align-items:center; justify-content:space-between;
+  background:white;
+}
+.cart-hd h3 {
+  font-family:'Fraunces', serif;
+  font-size:22px; font-weight:900; font-style:italic;
+  color:var(--terracota);
+}
+.cart-hd button {
+  background:none; border:none; font-size:22px;
+  color:rgba(61,31,13,0.35); cursor:pointer; transition:color .2s; line-height:1;
+}
+.cart-hd button:hover { color:var(--marrom); }
+
+.cart-lst {
+  flex:1; overflow-y:auto; padding:18px;
+  display:flex; flex-direction:column; gap:10px;
+}
+.cart-empty {
+  text-align:center; padding:60px 20px;
+  color:rgba(61,31,13,0.3);
+}
+.cart-empty span { font-size:50px; display:block; margin-bottom:12px; }
+.cart-empty p { font-size:13px; font-style:italic; line-height:1.6; }
+
+.ci {
+  background:var(--creme); border-radius:10px;
+  padding:14px; display:flex; align-items:center; gap:12px;
+  border:1.5px solid rgba(61,31,13,0.05);
+}
+.ci-em { font-size:28px; flex-shrink:0; }
+.ci-inf { flex:1; min-width:0; }
+.ci-nm { font-size:13px; font-weight:600; color:var(--marrom); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ci-pr { font-size:12px; color:var(--terracota); font-weight:600; margin-top:2px; }
+.ci-qty { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.ci-btn {
+  width:26px; height:26px;
+  background:white; border:1.5px solid rgba(61,31,13,0.1);
+  border-radius:6px; color:var(--marrom);
+  font-size:15px; font-weight:700;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all .2s; line-height:1;
+}
+.ci-btn:hover { background:var(--terracota); color:white; border-color:var(--terracota); }
+.ci-n { font-weight:700; font-size:14px; min-width:16px; text-align:center; }
+
+.cart-ft {
+  padding:20px 24px; background:white;
+  border-top:1.5px solid rgba(61,31,13,0.06);
+}
+.cart-tot {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:6px;
+}
+.cart-tot-lbl { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:rgba(61,31,13,0.35); }
+.cart-tot-val {
+  font-family:'Fraunces', serif; font-size:28px; font-weight:900; color:var(--terracota);
+}
+.cart-note { font-size:11px; color:rgba(61,31,13,0.3); font-style:italic; line-height:1.5; margin-bottom:16px; margin-top:4px; }
+.cart-pay {
+  width:100%; background:var(--marrom); color:var(--creme);
+  border:none; border-radius:4px; padding:16px;
+  font-family:'Instrument Sans', sans-serif;
+  font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  cursor:pointer; transition:all .3s;
+  box-shadow:4px 4px 0 var(--amarelo);
+}
+.cart-pay:hover { background:var(--terracota); transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--amarelo); }
+.cart-pay:disabled { opacity:.4; cursor:not-allowed; transform:none; box-shadow:4px 4px 0 var(--amarelo); }
+
+/* Toast */
+.toast {
+  position:fixed; bottom:28px; left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--verde-musgo); color:white;
+  padding:12px 26px; border-radius:4px;
+  font-size:13px; font-weight:600; letter-spacing:1px;
+  z-index:99999; opacity:0; pointer-events:none;
+  transition:all .35s; white-space:nowrap;
+  box-shadow:3px 3px 0 rgba(0,0,0,0.15);
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ================================
+   FOOTER
+================================ */
+.footer {
+  background:var(--marrom);
+  padding:60px 8vw 32px;
+}
+.footer-top {
+  display:grid; grid-template-columns:1.5fr 1fr 1fr;
+  gap:40px; margin-bottom:50px;
+}
+.footer-brand {
+  font-family:'Fraunces', serif;
+  font-size:32px; font-weight:900; font-style:italic;
+  color:var(--creme); margin-bottom:12px;
+}
+.footer-brand span { color:var(--terracota2); }
+.footer-tagline {
+  font-size:13px; color:rgba(250,245,236,0.4);
+  line-height:1.7; font-style:italic; max-width:260px;
+}
+.footer-col h4 {
+  font-size:9px; font-weight:600; letter-spacing:4px; text-transform:uppercase;
+  color:rgba(250,245,236,0.3); margin-bottom:20px;
+}
+.footer-col a {
+  display:block; font-size:14px;
+  color:rgba(250,245,236,0.6); text-decoration:none;
+  cursor:pointer; margin-bottom:12px;
+  transition:color .2s;
+}
+.footer-col a:hover { color:var(--terracota2); }
+.footer-divider {
+  border:none; border-top:1px solid rgba(250,245,236,0.08);
+  margin-bottom:24px;
+}
+.footer-bottom {
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:12px;
+  font-size:11px; color:rgba(250,245,236,0.2);
+}
+.footer-heart { color:var(--terracota2); }
+
+/* ================================
+   RESPONSIVO
+================================ */
+@media(max-width:960px){
+  .hero { grid-template-columns:1fr; }
+  .hero::after { display:none; }
+  .hero-right { background:var(--terracota); padding:50px 8vw; }
+  .hcard { background:rgba(255,255,255,0.95); }
+  .sobre-wrap { grid-template-columns:1fr; gap:50px; }
+  .sobre-visual { height:320px; }
+  .contato-wrap { grid-template-columns:1fr; }
+  .footer-top { grid-template-columns:1fr 1fr; }
+  .nav-desk { display:none; }
+  .hamburger { display:flex; }
+}
+@media(max-width:600px){
+  .topo { padding:0 20px; }
+  .hero-left { padding:50px 6vw 40px; }
+  .section { padding:70px 6vw; }
+  .footer { padding:50px 6vw 28px; }
+  .footer-top { grid-template-columns:1fr; }
+  .cform { padding:32px 24px; }
+  .sv-badge { display:none; }
+}
+</style>
+</head>
+
+<body>
+<div id="cur"></div>
+<div id="curR"></div>
+
+<!-- ========================
+     HEADER
+======================== -->
+<header class="topo">
+  <div class="logo" onclick="trocar('inicio')">
+    <span class="logo-bruna">por Bruna</span>
+    <span class="logo-main">Adoro <span>Farm</span></span>
+  </div>
+
+  <nav class="nav-desk">
+    <a onclick="trocar('inicio')" class="nl ativo">Início</a>
+    <a onclick="trocar('produtos')" class="nl">Produtos</a>
+    <a onclick="trocar('sobre')" class="nl">Sobre</a>
+    <a onclick="trocar('contato')" class="nl">Contato</a>
+  </nav>
+
+  <div class="topo-right">
+    <button class="sacola-btn" onclick="abrirCart()">
+      🛍 Sacola
+      <span class="sacola-badge" id="sbadge">0</span>
+    </button>
+    <div class="hamburger" id="hbg" onclick="toggleMob()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</header>
+
+<div class="mob-ov" id="mobOv" onclick="fecharMob()"></div>
+<nav class="menu-mob" id="menuMob">
+  <a onclick="trocar('inicio')">Início</a>
+  <a onclick="trocar('produtos')">Produtos</a>
+  <a onclick="trocar('sobre')">Sobre</a>
+  <a onclick="trocar('contato')">Contato</a>
+</nav>
+
+<!-- ========================
+     PÁGINA: INÍCIO
+======================== -->
+<div class="pagina ativa" id="inicio">
+
+  <section class="hero">
+    <div class="hero-left">
+      <span class="hero-tag">Acessórios originais Farm</span>
+
+      <h1 class="hero-h1">
+        <span class="underline">Bruna</span><br>
+        <em>Adoro Farm</em>
+      </h1>
+
+      <p class="hero-sub">
+        Chinelos, bolsas, garrafas e acessórios 100% originais Farm — com o carinho de quem realmente adora a marca.
+      </p>
+
+      <div class="hero-btns">
+        <button class="btn-marrom" onclick="trocar('produtos')">Ver produtos ✿</button>
+        <button class="btn-ghost" onclick="trocar('sobre')">Nossa história</button>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-cards">
+        <div class="hcard">
+          <span class="hcard-emoji">👡</span>
+          <div class="hcard-nome">Chinelos</div>
+          <div class="hcard-price">a partir de R$ 89</div>
+        </div>
+        <div class="hcard">
+          <span class="hcard-emoji">👜</span>
+          <div class="hcard-nome">Bolsas</div>
+          <div class="hcard-price">a partir de R$ 149</div>
+        </div>
+        <div class="hcard">
+          <span class="hcard-emoji">🧴</span>
+          <div class="hcard-nome">Garrafas</div>
+          <div class="hcard-price">a partir de R$ 129</div>
+        </div>
+        <div class="hcard">
+          <span class="hcard-emoji">✨</span>
+          <div class="hcard-nome">Acessórios</div>
+          <div class="hcard-price">a partir de R$ 49</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span class="ticker-item">Produtos Originais Farm</span>
+      <span class="ticker-item">Entrega para todo Brasil</span>
+      <span class="ticker-item">Atendimento Personalizado</span>
+      <span class="ticker-item">Parcele em até 12x</span>
+      <span class="ticker-item">100% Original</span>
+      <span class="ticker-item">Adoro Farm ✿</span>
+      <span class="ticker-item">Produtos Originais Farm</span>
+      <span class="ticker-item">Entrega para todo Brasil</span>
+      <span class="ticker-item">Atendimento Personalizado</span>
+      <span class="ticker-item">Parcele em até 12x</span>
+      <span class="ticker-item">100% Original</span>
+      <span class="ticker-item">Adoro Farm ✿</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">Adoro <span>Farm</span></div>
+        <p class="footer-tagline">Por Bruna — acessórios originais Farm com amor, cuidado e muito estilo.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navegação</h4>
+        <a onclick="trocar('inicio')">Início</a>
+        <a onclick="trocar('produtos')">Produtos</a>
+        <a onclick="trocar('sobre')">Sobre</a>
+        <a onclick="trocar('contato')">Contato</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contato</h4>
+        <a href="https://wa.me/5521969657654?text=Oi%2C%20gostaria%20de%20saber%20mais%20dos%20produtos%20da%20Farm" target="_blank">WhatsApp</a>
+        <a href="https://instagram.com/bruna.adorofarm" target="_blank">@bruna.adorofarm</a>
+        <a href="mailto:brunaa_fast@hotmail.com">brunaa_fast@hotmail.com</a>
+      </div>
+    </div>
+    <hr class="footer-divider">
+    <div class="footer-bottom">
+      <span>© 2025 Bruna Adoro Farm</span>
+      <span>Feito com <span class="footer-heart">♥</span> para você</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ========================
+     PÁGINA: PRODUTOS
+======================== -->
+<div class="pagina" id="produtos">
+  <section class="section" style="padding-bottom:0">
+    <span class="stag">Catálogo completo</span>
+    <h2 class="stitle">Tudo que você <em>adora</em></h2>
+    <p class="ssub">Peças 100% originais Farm. Escolha a sua e adicione à sacola.</p>
+    <div class="filtros">
+      <button class="fbtn ativo" onclick="filtrar('todos',this)">Todos ✿</button>
+      <button class="fbtn" onclick="filtrar('chinelos',this)">Chinelos 👡</button>
+      <button class="fbtn" onclick="filtrar('bolsas',this)">Bolsas 👜</button>
+      <button class="fbtn" onclick="filtrar('garrafas',this)">Garrafas 🧴</button>
+      <button class="fbtn" onclick="filtrar('acessorios',this)">Acessórios ✨</button>
+    </div>
+  </section>
+  <section class="section" style="padding-top:30px">
+    <div class="pgrid" id="pgrid"></div>
+  </section>
+
+  <footer class="footer">
+    <hr class="footer-divider" style="margin-top:0">
+    <div class="footer-bottom">
+      <span>© 2025 Bruna Adoro Farm</span>
+      <span>Feito com <span class="footer-heart">♥</span> para você</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ========================
+     PÁGINA: SOBRE
+======================== -->
+<div class="pagina" id="sobre">
+  <section class="section">
+    <div class="sobre-wrap">
+      <div class="sobre-visual">
+        <div class="sv-rect1"></div>
+        <div class="sv-rect2"></div>
+        <div class="sv-center">🌺</div>
+        <div class="sv-badge">🌸 100% Original</div>
+        <div class="sv-badge">❤️ Feito com amor</div>
+        <div class="sv-badge">✅ Desde 2020</div>
+      </div>
+
+      <div class="sobre-texto">
+        <span class="stag">Nossa história</span>
+        <h2 class="stitle">Bruna e sua <em>paixão</em> pela Farm</h2>
+        <p>Bruna é uma grande fã da Farm — apaixonada pelas estampas vibrantes, pelos florais inconfundíveis e por aquela energia tropical que só a marca tem. Sempre comprou muito, recomendou para todo mundo e virou referência entre as amigas quando o assunto é Farm.</p>
+        <p>Esse amor pela marca foi tão grande que um dia virou negócio: surgiu assim a <strong>Bruna Adoro Farm</strong>, uma loja especializada em acessórios originais para quem compartilha essa mesma paixão. Chinelos, bolsas, garrafas e muito mais — tudo escolhido com o olhar de quem realmente entende e ama cada detalhe.</p>
+
+        <div class="sobre-valores">
+          <div class="valor">
+            <span class="valor-ic">🌸</span>
+            <div class="valor-tx">
+              <h4>100% original Farm</h4>
+              <p>Todos os produtos são peças autênticas, com qualidade garantida.</p>
+            </div>
+          </div>
+          <div class="valor">
+            <span class="valor-ic">💌</span>
+            <div class="valor-tx">
+              <h4>Atendimento especial</h4>
+              <p>Cada pedido é embalado e enviado com atenção e carinho da Bruna.</p>
+            </div>
+          </div>
+          <div class="valor">
+            <span class="valor-ic">🚚</span>
+            <div class="valor-tx">
+              <h4>Entrega para todo o Brasil</h4>
+              <p>Enviamos para qualquer cidade, com rastreamento completo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <hr class="footer-divider" style="margin-top:0">
+    <div class="footer-bottom">
+      <span>© 2025 Bruna Adoro Farm</span>
+      <span>Feito com <span class="footer-heart">♥</span> para você</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ========================
+     PÁGINA: CONTATO
+======================== -->
+<div class="pagina" id="contato">
+  <section class="section">
+    <div class="contato-wrap">
+      <div class="cform">
+        <h3>Fala com a <em>Bruna</em> 🌸</h3>
+        <div class="fgrp">
+          <label>Seu nome</label>
+          <input type="text" placeholder="Como posso te chamar?">
+        </div>
+        <div class="fgrp">
+          <label>E-mail</label>
+          <input type="email" placeholder="brunaa_fast@hotmail.com">
+        </div>
+        <div class="fgrp">
+          <label>Mensagem</label>
+          <textarea rows="4" placeholder="Oi Bruna, quero saber sobre..."></textarea>
+        </div>
+        <button class="btn-marrom" style="width:100%;padding:15px;border:none;font-family:'Instrument Sans',sans-serif;font-size:13px;justify-content:center;" onclick="enviarContato()">
+          Enviar pelo WhatsApp 💬
+        </button>
+      </div>
+
+      <div class="cinfo-lado">
+        <h3>Adoro <em>falar</em> com vocês!</h3>
+        <p>Dúvida sobre produto, tamanho, disponibilidade ou só quer bater um papo sobre Farm? Manda mensagem — respondo com muito carinho!</p>
+        <div class="citems">
+          <a class="citem" href="https://wa.me/5521969657654?text=Oi%2C%20gostaria%20de%20saber%20mais%20dos%20produtos%20da%20Farm" target="_blank" style="text-decoration:none;color:inherit;">
+            <div class="citem-ic">💬</div>
+            <div class="citem-tx">
+              <small>WhatsApp</small>
+              <span>(21) 96965-7654</span>
+            </div>
+          </a>
+          <a class="citem" href="https://instagram.com/bruna.adorofarm" target="_blank" style="text-decoration:none;color:inherit;">
+            <div class="citem-ic">📸</div>
+            <div class="citem-tx">
+              <small>Instagram</small>
+              <span>@bruna.adorofarm</span>
+            </div>
+          </a>
+          <div class="citem">
+            <div class="citem-ic">📧</div>
+            <div class="citem-tx">
+              <small>E-mail</small>
+              <span>brunaa_fast@hotmail.com</span>
+            </div>
+          </div>
+          <div class="citem">
+            <div class="citem-ic">⏰</div>
+            <div class="citem-tx">
+              <small>Horário</small>
+              <span>Seg – Sáb, 9h às 20h</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <hr class="footer-divider" style="margin-top:0">
+    <div class="footer-bottom">
+      <span>© 2025 Bruna Adoro Farm</span>
+      <span>Feito com <span class="footer-heart">♥</span> para você</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ========================
+     CARRINHO
+======================== -->
+<div class="cart-ov" id="cartOv" onclick="fecharCart()"></div>
+<div class="cart-drw" id="cartDrw">
+  <div class="cart-hd">
+    <h3>Minha Sacola 🛍</h3>
+    <button onclick="fecharCart()">✕</button>
+  </div>
+  <div class="cart-lst" id="cartLst">
+    <div class="cart-empty">
+      <span>🛍</span>
+      <p>Sua sacola está vazia.<br><em>Escolha algo incrível!</em></p>
+    </div>
+  </div>
+  <div class="cart-ft">
+    <div class="cart-tot">
+      <span class="cart-tot-lbl">Total</span>
+      <span class="cart-tot-val" id="cartTotVal">R$ 0,00</span>
+    </div>
+    <p class="cart-note">Pagamento seguro via Mercado Pago.</p>
+    <button class="cart-pay" id="cartPayBtn" onclick="finalizarCompra()" disabled>
+      💳 Finalizar compra
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast">✿ Adicionado à sacola!</div>
+
+<script>
+// ================================
+// PRODUTOS
+// ================================
+const PRODUTOS = [
+  { id:'ch1', nome:'Chinelo Floral Rosa', cat:'chinelos', emoji:'👡', preco:89,  tag:'hot',  cor:'#FDF0F3', desc:'Estampa floral exclusiva Farm, solado macio.' },
+  { id:'ch2', nome:'Chinelo Jardim Tropical', cat:'chinelos', emoji:'👡', preco:99, tag:'novo', cor:'#EEF7F2', desc:'Inspirado nas flores tropicais brasileiras.' },
+  { id:'ch3', nome:'Chinelo Farm Classic', cat:'chinelos', emoji:'👡', preco:79, tag:null, cor:'#FFF8E8', desc:'O clássico que nunca sai de moda.' },
+  { id:'bo1', nome:'Bolsa Cestinha Floral', cat:'bolsas', emoji:'👜', preco:189, tag:'hot', cor:'#FDF0F3', desc:'Cestinha com alça e estampa exclusiva Farm.' },
+  { id:'bo2', nome:'Nécessaire Farm', cat:'bolsas', emoji:'👜', preco:149, tag:'novo', cor:'#EEF7F2', desc:'Perfeita para o dia a dia e viagens.' },
+  { id:'bo3', nome:'Bolsa Transversal', cat:'bolsas', emoji:'👜', preco:229, tag:null, cor:'#FFF8E8', desc:'Praticidade e estilo Farm em uma só peça.' },
+  { id:'ga1', nome:'Garrafa Farm 500ml', cat:'garrafas', emoji:'🧴', preco:129, tag:'hot', cor:'#FDF0F3', desc:'Mantém bebidas geladas por 12 horas.' },
+  { id:'ga2', nome:'Garrafa Floral 650ml', cat:'garrafas', emoji:'🧴', preco:149, tag:'novo', cor:'#FFF8E8', desc:'Design floral inconfundível e sustentável.' },
+  { id:'ac1', nome:'Scrunchie Farm Floral', cat:'acessorios', emoji:'🎀', preco:49, tag:'novo', cor:'#FDF0F3', desc:'Elástico de tecido com estampa floral Farm.' },
+  { id:'ac2', nome:'Lenço Farm', cat:'acessorios', emoji:'🧣', preco:89, tag:null, cor:'#EEF7F2', desc:'Versátil: no cabelo, pescoço ou bolsa.' },
+  { id:'ac3', nome:'Óculos Farm UV400', cat:'acessorios', emoji:'🕶️', preco:199, tag:'hot', cor:'#FFF8E8', desc:'Proteção UV400 com armação Farm exclusiva.' },
+  { id:'ac4', nome:'Chapéu Palha Farm', cat:'acessorios', emoji:'👒', preco:159, tag:null, cor:'#FDF0F3', desc:'Para o verão e todos os dias do ano.' },
+];
+
+function renderProd(lista) {
+  document.getElementById('pgrid').innerHTML = lista.map(p => `
+    <div class="pcard">
+      <div class="pcard-img" style="background:${p.cor}">
+        <span>${p.emoji}</span>
+        ${p.tag==='novo'?'<span class="ptag novo">Novo</span>':''}
+        ${p.tag==='hot'?'<span class="ptag hot">🔥 Hot</span>':''}
+      </div>
+      <div class="pcard-body">
+        <div class="pcat">${p.cat}</div>
+        <div class="pnome">${p.nome}</div>
+        <div class="pdesc">${p.desc}</div>
+        <div class="pfoot">
+          <span class="ppreco">R$ ${p.preco.toFixed(2).replace('.',',')}</span>
+          <button class="padd" id="padd-${p.id}" onclick="addCart('${p.id}')">+</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filtrar(cat, btn) {
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  renderProd(cat==='todos' ? PRODUTOS : PRODUTOS.filter(p=>p.cat===cat));
+}
+
+// ================================
+// CARRINHO
+// ================================
+let carrinho = [];
+// ══════════════════════════════════════
+// INTEGRAÇÃO PAGBANK via Railway
+// ══════════════════════════════════════
+const SERVIDOR_URL = 'https://bruna-pagbank-production.up.railway.app';
+
+function addCart(id) {
+  const p = PRODUTOS.find(x=>x.id===id);
+  if (!p) return;
+  const i = carrinho.findIndex(x=>x.id===id);
+  i>=0 ? carrinho[i].qty++ : carrinho.push({...p, qty:1});
+  atualizarCart();
+  mostrarToast();
+  const btn = document.getElementById('padd-'+id);
+  if(btn){ btn.classList.add('ok'); btn.textContent='✓'; setTimeout(()=>{ btn.classList.remove('ok'); btn.textContent='+'; },1500); }
+}
+
+function removeCart(id) {
+  const i = carrinho.findIndex(x=>x.id===id);
+  if(i<0) return;
+  carrinho[i].qty--;
+  if(carrinho[i].qty<=0) carrinho.splice(i,1);
+  atualizarCart();
+}
+
+function atualizarCart() {
+  const tot = carrinho.reduce((s,i)=>s+i.preco*i.qty, 0);
+  const qty = carrinho.reduce((s,i)=>s+i.qty, 0);
+
+  const sb = document.getElementById('sbadge');
+  sb.textContent = qty;
+  sb.classList.toggle('vis', qty>0);
+
+  document.getElementById('cartTotVal').textContent = 'R$ ' + tot.toFixed(2).replace('.',',');
+  document.getElementById('cartPayBtn').disabled = carrinho.length===0;
+
+  const lst = document.getElementById('cartLst');
+  if(carrinho.length===0){
+    lst.innerHTML=`<div class="cart-empty"><span>🛍</span><p>Sua sacola está vazia.<br><em>Escolha algo incrível!</em></p></div>`;
+    return;
+  }
+  lst.innerHTML = carrinho.map(i=>`
+    <div class="ci">
+      <span class="ci-em">${i.emoji}</span>
+      <div class="ci-inf">
+        <div class="ci-nm">${i.nome}</div>
+        <div class="ci-pr">R$ ${(i.preco*i.qty).toFixed(2).replace('.',',')}</div>
+      </div>
+      <div class="ci-qty">
+        <button class="ci-btn" onclick="removeCart('${i.id}')">−</button>
+        <span class="ci-n">${i.qty}</span>
+        <button class="ci-btn" onclick="addCart('${i.id}')">+</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function abrirCart() {
+  document.getElementById('cartDrw').classList.add('open');
+  document.getElementById('cartOv').classList.add('open');
+}
+function fecharCart() {
+  document.getElementById('cartDrw').classList.remove('open');
+  document.getElementById('cartOv').classList.remove('open');
+}
+function mostrarToast() {
+  const t=document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+async function finalizarCompra() {
+  if(!carrinho.length) return;
+  const btn = document.getElementById('cartPayBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Gerando pagamento...';
+
+  try {
+    // Envia o pedido para o servidor Railway
+    const resposta = await fetch(`${SERVIDOR_URL}/criar-pedido`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        itens: carrinho.map(i => ({
+          nome:       i.nome + ' — Bruna Adoro Farm',
+          quantidade: i.qty,
+          preco:      i.preco
+        })),
+        cliente: {
+          nome:  'Cliente Bruna Adoro Farm',
+          email: 'cliente@brunaadorofarm.com'
+        }
+      })
+    });
+
+    const dados = await resposta.json();
+
+    if(dados.sucesso && dados.link) {
+      // Redireciona para o checkout do PagBank
+      window.open(dados.link, '_blank');
+      // Limpa o carrinho
+      carrinho = [];
+      atualizarCart();
+      fecharCart();
+      mostrarToast('Redirecionando para o PagBank... 💳');
+    } else {
+      alert('Erro ao gerar pagamento: ' + (dados.erro || 'Tente novamente.'));
+      console.error(dados);
+    }
+
+  } catch(e) {
+    alert('Erro de conexão com o servidor. Tente novamente.');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '💳 Finalizar compra';
+  }
+}
+
+// ================================
+// NAVEGAÇÃO
+// ================================
+const NAV_MAP = {inicio:0, produtos:1, sobre:2, contato:3};
+
+function trocar(id) {
+  document.querySelectorAll('.pagina').forEach(p=>{ p.classList.remove('ativa'); p.style.display='none'; });
+  const pg = document.getElementById(id);
+  pg.style.display='block'; void pg.offsetWidth; pg.classList.add('ativa');
+  document.querySelectorAll('.nl').forEach(a=>a.classList.remove('ativo'));
+  const links = document.querySelectorAll('.nl');
+  if(links[NAV_MAP[id]]) links[NAV_MAP[id]].classList.add('ativo');
+  if(id==='produtos') renderProd(PRODUTOS);
+  fecharMob(); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ================================
+// MENU MOBILE
+// ================================
+function toggleMob() {
+  document.getElementById('menuMob').classList.contains('open') ? fecharMob() : abrirMob();
+}
+function abrirMob() {
+  document.getElementById('menuMob').classList.add('open');
+  document.getElementById('mobOv').classList.add('open');
+  document.getElementById('hbg').classList.add('open');
+}
+function fecharMob() {
+  document.getElementById('menuMob').classList.remove('open');
+  document.getElementById('mobOv').classList.remove('open');
+  document.getElementById('hbg').classList.remove('open');
+}
+
+// ================================
+// CURSOR
+// ================================
+const curEl=document.getElementById('cur'), curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; curEl.style.left=mx+'px'; curEl.style.top=my+'px'; });
+(function animR(){ rx+=(mx-rx)*.1; ry+=(my-ry)*.1; curR.style.left=rx+'px'; curR.style.top=ry+'px'; requestAnimationFrame(animR); })();
+document.querySelectorAll('a,button,.pcard,.hcard,.citem,.valor,.fbtn').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+});
+
+// ================================
+// CONTATO
+// ================================
+function enviarContato() {
+  const nome = document.querySelector('#contato input[type=text]').value.trim();
+  const msg  = document.querySelector('#contato textarea').value.trim();
+  if(!nome && !msg){ alert('Preencha seu nome ou mensagem!'); return; }
+  const txt = `Olá Bruna! Sou ${nome||'um cliente'} e gostaria de saber: ${msg||'...'}`;
+  window.open('https://wa.me/5521969657654?text='+encodeURIComponent(txt),'_blank');
+}
+
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ fecharCart(); fecharMob(); } });
+</script>
+</body>
+</html>
